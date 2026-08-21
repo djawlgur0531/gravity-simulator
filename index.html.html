@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>이체 · 삼체 문제 시뮬레이터</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        background: black;
+        color: white;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+    }
+
+    #space {
+        display: block;
+    }
+
+    /* =========================
+       조작 패널
+    ========================= */
+
+    #controls {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+
+        width: 240px;
+        padding: 18px;
+
+        background: rgba(30, 30, 30, 0.92);
+        border: 1px solid white;
+        border-radius: 12px;
+    }
+
+    #controls h2 {
+        margin: 0 0 16px 0;
+        font-size: 20px;
+    }
+
+    .control {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 14px;
+    }
+
+    input[type="range"] {
+        width: 100%;
+    }
+
+    input[type="color"] {
+        width: 100%;
+        height: 35px;
+        cursor: pointer;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+
+        border: none;
+        border-radius: 6px;
+
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    /* =========================
+       모드 선택 버튼
+    ========================= */
+
+    .modeButtons {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 18px;
+    }
+
+    .modeButton {
+        flex: 1;
+        margin: 0;
+    }
+
+    .activeMode {
+        outline: 2px solid white;
+    }
+
+    /* =========================
+       천체 C 설정 숨기기
+    ========================= */
+
+    .hidden {
+        display: none;
+    }
+
+    /* =========================
+       폰 화면
+    ========================= */
+
+    @media (max-width: 600px) {
+
+        #controls {
+            top: auto;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+
+            width: auto;
+            max-height: 45vh;
+            overflow-y: auto;
+
+            padding: 12px;
+        }
+
+        #controls h2 {
+            font-size: 17px;
+            margin-bottom: 10px;
+        }
+
+        .control {
+            margin-bottom: 10px;
+        }
+    }
+
+</style>
+</head>
+
+
+<body>
+
+<canvas id="space"></canvas>
+
+
+<!-- =========================
+     조작 패널
+========================= -->
+
+<div id="controls">
+
+    <h2>중력 시뮬레이터</h2>
+
+
+    <!-- 모드 선택 -->
+
+    <div class="modeButtons">
+
+        <button
+            id="twoBodyButton"
+            class="modeButton activeMode"
+        >
+            이체
+        </button>
+
+        <button
+            id="threeBodyButton"
+            class="modeButton"
+        >
+            삼체
+        </button>
+
+    </div>
+
+
+    <!-- 천체 A 색상 -->
+
+    <div class="control">
+
+        <label>천체 A 색상</label>
+
+        <input
+            type="color"
+            id="colorA"
+            value="#00aaff"
+        >
+
+    </div>
+
+
+    <!-- 천체 B 색상 -->
+
+    <div class="control">
+
+        <label>천체 B 색상</label>
+
+        <input
+            type="color"
+            id="colorB"
+            value="#ffcc00"
+        >
+
+    </div>
+
+
+    <!-- 천체 C 색상 -->
+
+    <div
+        class="control hidden"
+        id="colorCControl"
+    >
+
+        <label>천체 C 색상</label>
+
+        <input
+            type="color"
+            id="colorC"
+            value="#ff4444"
+        >
+
+    </div>
+
+
+    <!-- 중력 -->
+
+    <div class="control">
+
+        <label>
+
+            중력 G:
+            <span id="gravityValue">1</span>
+
+        </label>
+
+        <input
+            type="range"
+            id="gravity"
+            min="0"
+            max="3"
+            step="0.1"
+            value="1"
+        >
+
+    </div>
+
+
+    <!-- 초기화 -->
+
+    <button id="resetButton">
+
+        초기화
+
+    </button>
+
+</div>
+
+
+<script>
+
+/* =====================================
+   Canvas
+===================================== */
+
+const canvas = document.getElementById("space");
+const ctx = canvas.getContext("2d");
+
+
+function resizeCanvas() {
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+}
+
+
+resizeCanvas();
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
+
+
+/* =====================================
+   조작 요소
+===================================== */
+
+const colorAInput =
+    document.getElementById("colorA");
+
+const colorBInput =
+    document.getElementById("colorB");
+
+const colorCInput =
+    document.getElementById("colorC");
+
+const colorCControl =
+    document.getElementById("colorCControl");
+
+const gravitySlider =
+    document.getElementById("gravity");
+
+const gravityValue =
+    document.getElementById("gravityValue");
+
+const resetButton =
+    document.getElementById("resetButton");
+
+const twoBodyButton =
+    document.getElementById("twoBodyButton");
+
+const threeBodyButton =
+    document.getElementById("threeBodyButton");
+
+
+/* =====================================
+   시뮬레이션 변수
+===================================== */
+
+let G = 1;
+
+let bodies = [];
+
+// 현재 모드
+let mode = 2;
+
+
+/* =====================================
+   카메라
+===================================== */
+
+let cameraX = 0;
+let cameraY = 0;
+let zoom = 1;
+
+
+/* =====================================
+   이체 초기화
+===================================== */
+
+function createTwoBodies() {
+
+    let bodyA = {
+
+        x: -200,
+        y: 0,
+
+        vx: 0,
+        vy: -1.12,
+
+        mass: 1000,
+        size: 18,
+
+        color: colorAInput.value,
+
+        trail: []
+
+    };
+
+
+    let bodyB = {
+
+        x: 200,
+        y: 0,
+
+        vx: 0,
+        vy: 1.12,
+
+        mass: 1000,
+        size: 18,
+
+        color: colorBInput.value,
+
+        trail: []
+
+    };
+
+
+    bodies = [
+
+        bodyA,
+        bodyB
+
+    ];
+
+}
+
+
+/* =====================================
+   삼체 초기화
+===================================== */
+
+function createThreeBodies() {
+
+    let bodyA = {
+
+        x: 0,
+        y: -200,
+
+        vx: 1.2,
+        vy: 0,
+
+        mass: 1000,
+        size: 18,
+
+        color: colorAInput.value,
+
+        trail: []
+
+    };
+
+
+    let bodyB = {
+
+        x: -250,
+        y: 200,
+
+        vx: -0.6,
+        vy: 1,
+
+        mass: 1000,
+        size: 18,
+
+        color: colorBInput.value,
+
+        trail: []
+
+    };
+
+
+    let bodyC = {
+
+        x: 250,
+        y: 200,
+
+        vx: -0.6,
+        vy: -1,
+
+        mass: 1000,
+        size: 18,
+
+        color: colorCInput.value,
+
+        trail: []
+
+    };
+
+
+    bodies = [
+
+        bodyA,
+        bodyB,
+        bodyC
+
+    ];
+
+}
+
+
+/* =====================================
+   시뮬레이션 초기화
+===================================== */
+
+function resetSimulation() {
+
+    G = 1;
+
+    gravitySlider.value = 1;
+
+    gravityValue.textContent = 1;
+
+
+    if (mode === 2) {
+
+        createTwoBodies();
+
+    } else {
+
+        createThreeBodies();
+
+    }
+
+
+    cameraX = 0;
+    cameraY = 0;
+    zoom = 1;
+
+}
+
+
+/* =====================================
+   중력 계산
+===================================== */
+
+function applyGravity(A, B) {
+
+    let dx =
+        B.x - A.x;
+
+    let dy =
+        B.y - A.y;
+
+
+    let distance =
+        Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
+
+
+    // 너무 가까워졌을 때
+    // 계산이 폭발하는 것 방지
+
+    if (distance < 30) {
+
+        distance = 30;
+
+    }
+
+
+    let force =
+
+        G *
+
+        A.mass *
+
+        B.mass /
+
+        (distance * distance);
+
+
+    let fx =
+
+        force *
+
+        dx /
+
+        distance;
+
+
+    let fy =
+
+        force *
+
+        dy /
+
+        distance;
+
+
+    // A
+
+    A.vx +=
+        fx / A.mass;
+
+    A.vy +=
+        fy / A.mass;
+
+
+    // B
+
+    B.vx -=
+        fx / B.mass;
+
+    B.vy -=
+        fy / B.mass;
+
+}
+
+
+/* =====================================
+   모든 천체의 중력 계산
+===================================== */
+
+function calculateGravity() {
+
+    for (
+
+        let i = 0;
+
+        i < bodies.length;
+
+        i++
+
+    ) {
+
+        for (
+
+            let j = i + 1;
+
+            j < bodies.length;
+
+            j++
+
+        ) {
+
+            applyGravity(
+
+                bodies[i],
+
+                bodies[j]
+
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =====================================
+   위치 업데이트
+===================================== */
+
+function update() {
+
+    calculateGravity();
+
+
+    for (
+
+        let body of bodies
+
+    ) {
+
+        body.x +=
+            body.vx;
+
+        body.y +=
+            body.vy;
+
+    }
+
+}
+
+
+/* =====================================
+   궤적 저장
+===================================== */
+
+function saveTrails() {
+
+    for (
+
+        let body of bodies
+
+    ) {
+
+        body.trail.push({
+
+            x: body.x,
+            y: body.y
+
+        });
+
+
+        if (
+
+            body.trail.length > 1000
+
+        ) {
+
+            body.trail.shift();
+
+        }
+
+    }
+
+}
+
+
+/* =====================================
+   자동 카메라
+===================================== */
+
+function updateCamera() {
+
+    // -------------------------
+    // 천체들의 평균 위치
+    // -------------------------
+
+    let averageX = 0;
+    let averageY = 0;
+
+
+    for (
+
+        let body of bodies
+
+    ) {
+
+        averageX +=
+            body.x;
+
+        averageY +=
+            body.y;
+
+    }
+
+
+    averageX /= bodies.length;
+    averageY /= bodies.length;
+
+
+    // 부드럽게 이동
+
+    cameraX +=
+
+        (averageX - cameraX)
+
+        * 0.05;
+
+
+    cameraY +=
+
+        (averageY - cameraY)
+
+        * 0.05;
+
+
+    // -------------------------
+    // 가장 멀리 있는 천체
+    // -------------------------
+
+    let maxDistance = 1;
+
+
+    for (
+
+        let body of bodies
+
+    ) {
+
+        let dx =
+            body.x - cameraX;
+
+        let dy =
+            body.y - cameraY;
+
+
+        let distance =
+
+            Math.sqrt(
+
+                dx * dx +
+
+                dy * dy
+
+            );
+
+
+        if (
+
+            distance > maxDistance
+
+        ) {
+
+            maxDistance =
+                distance;
+
+        }
+
+    }
+
+
+    // 목표 줌
+
+    let targetZoom =
+
+        Math.min(
+
+            canvas.width,
+
+            canvas.height
+
+        )
+
+        /
+
+        (maxDistance * 3);
+
+
+    // 줌 제한
+
+    targetZoom =
+
+        Math.max(
+
+            0.1,
+
+            Math.min(
+
+                targetZoom,
+
+                2
+
+            )
+
+        );
+
+
+    // 부드러운 줌
+
+    zoom +=
+
+        (targetZoom - zoom)
+
+        * 0.05;
+
+}
+
+
+/* =====================================
+   실제 좌표 → 화면 좌표
+===================================== */
+
+function worldToScreen(x, y) {
+
+    return {
+
+        x:
+
+            (x - cameraX)
+
+            * zoom
+
+            +
+
+            canvas.width / 2,
+
+
+        y:
+
+            (y - cameraY)
+
+            * zoom
+
+            +
+
+            canvas.height / 2
+
+    };
+
+}
+
+
+/* =====================================
+   궤적 그리기
+===================================== */
+
+function drawTrail(body) {
+
+    if (
+
+        body.trail.length < 2
+
+    ) {
+
+        return;
+
+    }
+
+
+    ctx.beginPath();
+
+
+    let first =
+
+        worldToScreen(
+
+            body.trail[0].x,
+
+            body.trail[0].y
+
+        );
+
+
+    ctx.moveTo(
+
+        first.x,
+
+        first.y
+
+    );
+
+
+    for (
+
+        let i = 1;
+
+        i < body.trail.length;
+
+        i++
+
+    ) {
+
+        let point =
+
+            worldToScreen(
+
+                body.trail[i].x,
+
+                body.trail[i].y
+
+            );
+
+
+        ctx.lineTo(
+
+            point.x,
+
+            point.y
+
+        );
+
+    }
+
+
+    ctx.strokeStyle =
+        body.color;
+
+
+    ctx.lineWidth =
+
+        Math.max(
+
+            1,
+
+            zoom
+
+        );
+
+
+    ctx.stroke();
+
+}
+
+
+/* =====================================
+   천체 그리기
+===================================== */
+
+function drawBody(body) {
+
+    let position =
+
+        worldToScreen(
+
+            body.x,
+
+            body.y
+
+        );
+
+
+    ctx.beginPath();
+
+
+    ctx.arc(
+
+        position.x,
+
+        position.y,
+
+        body.size * zoom,
+
+        0,
+
+        Math.PI * 2
+
+    );
+
+
+    ctx.fillStyle =
+        body.color;
+
+
+    ctx.fill();
+
+}
+
+
+/* =====================================
+   애니메이션
+===================================== */
+
+function animate() {
+
+    // 화면 지우기
+
+    ctx.fillStyle =
+        "black";
+
+
+    ctx.fillRect(
+
+        0,
+
+        0,
+
+        canvas.width,
+
+        canvas.height
+
+    );
+
+
+    // 색상 실시간 반영
+
+    if (
+
+        bodies.length >= 2
+
+    ) {
+
+        bodies[0].color =
+            colorAInput.value;
+
+        bodies[1].color =
+            colorBInput.value;
+
+    }
+
+
+    if (
+
+        bodies.length === 3
+
+    ) {
+
+        bodies[2].color =
+            colorCInput.value;
+
+    }
+
+
+    // 운동 계산
+
+    update();
+
+
+    // 궤적 저장
+
+    saveTrails();
+
+
+    // 카메라
+
+    updateCamera();
+
+
+    // 궤적
+
+    for (
+
+        let body of bodies
+
+    ) {
+
+        drawTrail(body);
+
+    }
+
+
+    // 천체
+
+    for (
+
+        let body of bodies
+
+    ) {
+
+        drawBody(body);
+
+    }
+
+
+    // 반복
+
+    requestAnimationFrame(
+        animate
+    );
+
+}
+
+
+/* =====================================
+   중력 슬라이더
+===================================== */
+
+gravitySlider.addEventListener(
+
+    "input",
+
+    function() {
+
+        G =
+
+            Number(
+                gravitySlider.value
+            );
+
+
+        gravityValue.textContent =
+            G;
+
+    }
+
+);
+
+
+/* =====================================
+   이체 모드
+===================================== */
+
+twoBodyButton.addEventListener(
+
+    "click",
+
+    function() {
+
+        mode = 2;
+
+
+        twoBodyButton.classList.add(
+            "activeMode"
+        );
+
+
+        threeBodyButton.classList.remove(
+            "activeMode"
+        );
+
+
+        // C 색상 설정 숨기기
+
+        colorCControl.classList.add(
+            "hidden"
+        );
+
+
+        resetSimulation();
+
+    }
+
+);
+
+
+/* =====================================
+   삼체 모드
+===================================== */
+
+threeBodyButton.addEventListener(
+
+    "click",
+
+    function() {
+
+        mode = 3;
+
+
+        threeBodyButton.classList.add(
+            "activeMode"
+        );
+
+
+        twoBodyButton.classList.remove(
+            "activeMode"
+        );
+
+
+        // C 색상 설정 보이기
+
+        colorCControl.classList.remove(
+            "hidden"
+        );
+
+
+        resetSimulation();
+
+    }
+
+);
+
+
+/* =====================================
+   초기화 버튼
+===================================== */
+
+resetButton.addEventListener(
+
+    "click",
+
+    function() {
+
+        resetSimulation();
+
+    }
+
+);
+
+
+/* =====================================
+   시작
+===================================== */
+
+resetSimulation();
+
+animate();
+
+</script>
+
+</body>
+</html>
