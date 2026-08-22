@@ -887,7 +887,6 @@ function updateCamera() {
 
 }
 
-
 /* =====================================
    궤적 그리기
 ===================================== */
@@ -995,16 +994,12 @@ function drawBody(body) {
         worldToScreen(
 
             body.x,
-
             body.y,
-
             body.z
 
         );
 
-
     ctx.beginPath();
-
 
     ctx.arc(
 
@@ -1020,16 +1015,12 @@ function drawBody(body) {
 
     );
 
-
     ctx.fillStyle =
         body.color;
-
 
     ctx.fill();
 
 }
-
-
 /* =====================================
    애니메이션
 ===================================== */
