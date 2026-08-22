@@ -1370,30 +1370,26 @@ toggleControls.addEventListener(
     }
 
 );
-   /* =====================================
+  /* =====================================
    3D 카메라 드래그 조작
 ===================================== */
 
-canvas.addEventListener("pointerdown", function(event) {
+canvas.style.touchAction = "none";
 
-    // 설정창을 누른 경우에는
-    // 카메라 회전을 시작하지 않음
-    if (
-        event.target.closest("#controls") ||
-        event.target.closest("#toggleControls")
-    ) {
-        return;
-    }
+
+canvas.addEventListener("pointerdown", function(event) {
 
     isDragging = true;
 
     lastMouseX = event.clientX;
     lastMouseY = event.clientY;
 
+    canvas.setPointerCapture(event.pointerId);
+
 });
 
 
-window.addEventListener("pointermove", function(event) {
+canvas.addEventListener("pointermove", function(event) {
 
     if (!isDragging) {
         return;
@@ -1413,13 +1409,15 @@ window.addEventListener("pointermove", function(event) {
         deltaY * 0.01;
 
 
-    // 위아래로 너무 뒤집히는 것 방지
     rotationX = Math.max(
+
         -Math.PI / 2,
+
         Math.min(
             Math.PI / 2,
             rotationX
         )
+
     );
 
 
@@ -1432,10 +1430,20 @@ window.addEventListener("pointermove", function(event) {
 });
 
 
-window.addEventListener("pointerup", function() {
+canvas.addEventListener("pointerup", function(event) {
 
     isDragging = false;
 
+    canvas.releasePointerCapture(event.pointerId);
+
+});
+
+
+canvas.addEventListener("pointercancel", function() {
+
+    isDragging = false;
+
+});
 });
 animate();
 
