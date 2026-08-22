@@ -171,7 +171,6 @@
 
     </div>
 
-
     <!-- 천체 A 색상 -->
 
     <div class="control">
@@ -253,6 +252,11 @@
 
 </div>
 
+   
+   <button id="toggleControls">
+    ⚙️ 설정 ▲
+</button>
+
 
 <script>
 
@@ -310,6 +314,9 @@ const twoBodyButton =
 
 const threeBodyButton =
     document.getElementById("threeBodyButton");
+
+const controls =
+    document.getElementById("controls");
 
 
 /* =====================================
@@ -1204,7 +1211,38 @@ resetButton.addEventListener(
 ===================================== */
 
 resetSimulation();
+const toggleControls =
+    document.getElementById("toggleControls");
 
+toggleControls.addEventListener(
+
+    "click",
+
+    function() {
+
+        controls.classList.toggle(
+            "closed"
+        );
+
+        if (
+            controls.classList.contains(
+                "closed"
+            )
+        ) {
+
+            toggleControls.textContent =
+                "⚙️ 설정 ▼";
+
+        } else {
+
+            toggleControls.textContent =
+                "⚙️ 설정 ▲";
+
+        }
+
+    }
+
+);
 animate();
 
 </script>
