@@ -1,179 +1,205 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>이체 · 삼체 문제 시뮬레이터</title>
 
+
 <style>
-    * {
-        box-sizing: border-box;
-    }
 
-    body {
-        margin: 0;
-        background: black;
-        color: white;
-        font-family: Arial, sans-serif;
-        overflow: hidden;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    #space {
-        display: block;
-    }
 
-    /* =========================
-       조작 패널
-    ========================= */
+body {
+    margin: 0;
 
-    #controls {
-        position: fixed;
-        top: 20px;
-        right: 20px;
+    background: black;
 
-        width: 240px;
-        padding: 18px;
+    color: white;
 
-        background: rgba(30, 30, 30, 0.92);
-        border: 1px solid white;
-        border-radius: 12px;
-    }
+    font-family: Arial, sans-serif;
 
-    #controls h2 {
-        margin: 0 0 16px 0;
-        font-size: 20px;
-    }
+    overflow: hidden;
+}
 
-    .control {
-        margin-bottom: 15px;
-    }
 
-    label {
-        display: block;
-        margin-bottom: 7px;
-        font-size: 14px;
-    }
+#space {
+    display: block;
+}
 
-    input[type="range"] {
-        width: 100%;
-    }
 
-    input[type="color"] {
-        width: 100%;
-        height: 35px;
-        cursor: pointer;
-    }
+/* =========================
+   조작 패널
+========================= */
 
-    button {
-        width: 100%;
-        padding: 10px;
-        margin-top: 5px;
+#controls {
 
-        border: none;
-        border-radius: 6px;
+    position: fixed;
 
-        cursor: pointer;
-        font-size: 15px;
-    }
+    top: 20px;
 
-    /* =========================
-       모드 선택 버튼
-    ========================= */
+    right: 20px;
 
-    .modeButtons {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 18px;
-    }
+    width: 240px;
 
-    .modeButton {
-        flex: 1;
-        margin: 0;
-    }
+    padding: 18px;
 
-    .activeMode {
-        outline: 2px solid white;
-    }
+    background: rgba(30, 30, 30, 0.92);
 
-    /* =========================
-       천체 C 설정 숨기기
-    ========================= */
+    border: 1px solid white;
 
-    .hidden {
-        display: none;
-    }
+    border-radius: 12px;
 
-    /* =========================
-       폰 화면
-    ========================= */
+}
 
-    @media (max-width: 600px) {
 
-        #controls {
-            top: auto;
-            bottom: 10px;
-            left: 10px;
-            right: 10px;
+#controls h2 {
 
-            width: auto;
-            max-height: 45vh;
-            overflow-y: auto;
+    margin: 0 0 16px 0;
 
-            padding: 12px;
-        }
+    font-size: 20px;
 
-        #controls h2 {
-            font-size: 17px;
-            margin-bottom: 10px;
-        }
+}
 
-        .control {
-            margin-bottom: 10px;
-        }
-    }
+
+.control {
+
+    margin-bottom: 15px;
+
+}
+
+
+label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 14px;
+
+}
+
+
+input[type="range"] {
+
+    width: 100%;
+
+}
+
+
+input[type="color"] {
+
+    width: 100%;
+
+    height: 35px;
+
+    cursor: pointer;
+
+}
+
+
+button {
+
+    width: 100%;
+
+    padding: 10px;
+
+    margin-top: 5px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+}
+
+
+/* =========================
+   모드 선택 버튼
+========================= */
+
+.modeButtons {
+
+    display: flex;
+
+    gap: 8px;
+
+    margin-bottom: 18px;
+
+}
+
+
+.modeButton {
+
+    flex: 1;
+
+    margin: 0;
+
+}
+
+
+.activeMode {
+
+    outline: 2px solid white;
+
+}
+
+
+/* =========================
+   천체 C 설정 숨기기
+========================= */
+
+.hidden {
+
+    display: none;
+
+}
+
+
 /* =========================
    설정창 접기 버튼
 ========================= */
 
 #toggleControls {
+
     display: none;
+
 }
 
 
 /* =========================
-   모바일 설정창
+   폰 화면
 ========================= */
 
 @media (max-width: 600px) {
 
-    #toggleControls {
-        display: block;
+    #controls {
 
-        position: fixed;
+        top: auto;
 
-        bottom: 15px;
-        right: 15px;
+        bottom: 10px;
+
+        left: 10px;
+
+        right: 10px;
 
         width: auto;
 
-        padding: 12px 18px;
+        max-height: 45vh;
 
-        background: rgba(30, 30, 30, 0.95);
+        overflow-y: auto;
 
-        color: white;
-
-        border: 1px solid white;
-
-        border-radius: 10px;
-
-        font-size: 16px;
-
-        z-index: 20;
-    }
-
-
-    #controls {
+        padding: 12px;
 
         transition:
             transform 0.3s ease,
@@ -193,12 +219,60 @@
 
     }
 
+
+    #controls h2 {
+
+        font-size: 17px;
+
+        margin-bottom: 10px;
+
+    }
+
+
+    .control {
+
+        margin-bottom: 10px;
+
+    }
+
+
+    #toggleControls {
+
+        display: block;
+
+        position: fixed;
+
+        bottom: 15px;
+
+        right: 15px;
+
+        width: auto;
+
+        padding: 12px 18px;
+
+        background: rgba(30, 30, 30, 0.95);
+
+        color: white;
+
+        border: 1px solid white;
+
+        border-radius: 10px;
+
+        font-size: 16px;
+
+        z-index: 20;
+
+    }
+
 }
+
 </style>
+
 </head>
 
 
 <body>
+
 
 <canvas id="space"></canvas>
 
@@ -223,6 +297,7 @@
             이체
         </button>
 
+
         <button
             id="threeBodyButton"
             class="modeButton"
@@ -231,6 +306,7 @@
         </button>
 
     </div>
+
 
     <!-- 천체 A 색상 -->
 
@@ -291,6 +367,7 @@
 
         </label>
 
+
         <input
             type="range"
             id="gravity"
@@ -313,35 +390,50 @@
 
 </div>
 
-   
-   <button id="toggleControls">
+
+<!-- 모바일 설정 버튼 -->
+
+<button id="toggleControls">
+
     ⚙️ 설정 ▲
+
 </button>
 
 
 <script>
 
+
 /* =====================================
    Canvas
 ===================================== */
 
-const canvas = document.getElementById("space");
-const ctx = canvas.getContext("2d");
+const canvas =
+    document.getElementById("space");
+
+const ctx =
+    canvas.getContext("2d");
 
 
 function resizeCanvas() {
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width =
+        window.innerWidth;
+
+    canvas.height =
+        window.innerHeight;
 
 }
 
 
 resizeCanvas();
 
+
 window.addEventListener(
+
     "resize",
+
     resizeCanvas
+
 );
 
 
@@ -379,6 +471,9 @@ const threeBodyButton =
 const controls =
     document.getElementById("controls");
 
+const toggleControls =
+    document.getElementById("toggleControls");
+
 
 /* =====================================
    시뮬레이션 변수
@@ -388,7 +483,6 @@ let G = 1;
 
 let bodies = [];
 
-// 현재 모드
 let mode = 2;
 
 
@@ -397,8 +491,22 @@ let mode = 2;
 ===================================== */
 
 let cameraX = 0;
+
 let cameraY = 0;
+
+let cameraZ = 0;
+
 let zoom = 1;
+
+
+/* =====================================
+   3D 원근 설정
+
+   숫자가 클수록
+   원근감이 약해짐
+===================================== */
+
+const perspectiveDistance = 1000;
 
 
 /* =====================================
@@ -411,14 +519,17 @@ function createTwoBodies() {
 
         x: -200,
         y: 0,
+        z: -120,
 
         vx: 0,
         vy: -1.12,
+        vz: 0.35,
 
         mass: 1000,
         size: 18,
 
-        color: colorAInput.value,
+        color:
+            colorAInput.value,
 
         trail: []
 
@@ -429,14 +540,17 @@ function createTwoBodies() {
 
         x: 200,
         y: 0,
+        z: 120,
 
         vx: 0,
         vy: 1.12,
+        vz: -0.35,
 
         mass: 1000,
         size: 18,
 
-        color: colorBInput.value,
+        color:
+            colorBInput.value,
 
         trail: []
 
@@ -446,6 +560,7 @@ function createTwoBodies() {
     bodies = [
 
         bodyA,
+
         bodyB
 
     ];
@@ -463,14 +578,17 @@ function createThreeBodies() {
 
         x: 0,
         y: -200,
+        z: -180,
 
         vx: 1.2,
         vy: 0,
+        vz: 0.4,
 
         mass: 1000,
         size: 18,
 
-        color: colorAInput.value,
+        color:
+            colorAInput.value,
 
         trail: []
 
@@ -481,14 +599,17 @@ function createThreeBodies() {
 
         x: -250,
         y: 200,
+        z: 120,
 
         vx: -0.6,
         vy: 1,
+        vz: -0.25,
 
         mass: 1000,
         size: 18,
 
-        color: colorBInput.value,
+        color:
+            colorBInput.value,
 
         trail: []
 
@@ -499,14 +620,17 @@ function createThreeBodies() {
 
         x: 250,
         y: 200,
+        z: 40,
 
         vx: -0.6,
         vy: -1,
+        vz: -0.15,
 
         mass: 1000,
         size: 18,
 
-        color: colorCInput.value,
+        color:
+            colorCInput.value,
 
         trail: []
 
@@ -516,7 +640,9 @@ function createThreeBodies() {
     bodies = [
 
         bodyA,
+
         bodyB,
+
         bodyC
 
     ];
@@ -549,14 +675,18 @@ function resetSimulation() {
 
 
     cameraX = 0;
+
     cameraY = 0;
+
+    cameraZ = 0;
+
     zoom = 1;
 
 }
 
 
 /* =====================================
-   중력 계산
+   중력 계산 - 3차원
 ===================================== */
 
 function applyGravity(A, B) {
@@ -567,16 +697,24 @@ function applyGravity(A, B) {
     let dy =
         B.y - A.y;
 
+    let dz =
+        B.z - A.z;
+
 
     let distance =
         Math.sqrt(
+
             dx * dx +
-            dy * dy
+
+            dy * dy +
+
+            dz * dz
+
         );
 
 
-    // 너무 가까워졌을 때
-    // 계산이 폭발하는 것 방지
+    /* 너무 가까워졌을 때
+       계산 폭발 방지 */
 
     if (distance < 30) {
 
@@ -614,7 +752,16 @@ function applyGravity(A, B) {
         distance;
 
 
-    // A
+    let fz =
+
+        force *
+
+        dz /
+
+        distance;
+
+
+    /* A */
 
     A.vx +=
         fx / A.mass;
@@ -622,14 +769,20 @@ function applyGravity(A, B) {
     A.vy +=
         fy / A.mass;
 
+    A.vz +=
+        fz / A.mass;
 
-    // B
+
+    /* B */
 
     B.vx -=
         fx / B.mass;
 
     B.vy -=
         fy / B.mass;
+
+    B.vz -=
+        fz / B.mass;
 
 }
 
@@ -676,7 +829,7 @@ function calculateGravity() {
 
 
 /* =====================================
-   위치 업데이트
+   위치 업데이트 - 3차원
 ===================================== */
 
 function update() {
@@ -696,13 +849,16 @@ function update() {
         body.y +=
             body.vy;
 
+        body.z +=
+            body.vz;
+
     }
 
 }
 
 
 /* =====================================
-   궤적 저장
+   궤적 저장 - 3차원
 ===================================== */
 
 function saveTrails() {
@@ -716,7 +872,10 @@ function saveTrails() {
         body.trail.push({
 
             x: body.x,
-            y: body.y
+
+            y: body.y,
+
+            z: body.z
 
         });
 
@@ -738,16 +897,17 @@ function saveTrails() {
 
 /* =====================================
    자동 카메라
+
+   3D 공간의 평균 위치를 따라감
 ===================================== */
 
 function updateCamera() {
 
-    // -------------------------
-    // 천체들의 평균 위치
-    // -------------------------
-
     let averageX = 0;
+
     let averageY = 0;
+
+    let averageZ = 0;
 
 
     for (
@@ -762,14 +922,23 @@ function updateCamera() {
         averageY +=
             body.y;
 
+        averageZ +=
+            body.z;
+
     }
 
 
-    averageX /= bodies.length;
-    averageY /= bodies.length;
+    averageX /=
+        bodies.length;
+
+    averageY /=
+        bodies.length;
+
+    averageZ /=
+        bodies.length;
 
 
-    // 부드럽게 이동
+    /* 부드러운 카메라 이동 */
 
     cameraX +=
 
@@ -785,9 +954,14 @@ function updateCamera() {
         * 0.05;
 
 
-    // -------------------------
-    // 가장 멀리 있는 천체
-    // -------------------------
+    cameraZ +=
+
+        (averageZ - cameraZ)
+
+        * 0.05;
+
+
+    /* 가장 멀리 있는 천체 */
 
     let maxDistance = 1;
 
@@ -804,14 +978,18 @@ function updateCamera() {
         let dy =
             body.y - cameraY;
 
+        let dz =
+            body.z - cameraZ;
+
 
         let distance =
-
             Math.sqrt(
 
                 dx * dx +
 
-                dy * dy
+                dy * dy +
+
+                dz * dz
 
             );
 
@@ -830,7 +1008,7 @@ function updateCamera() {
     }
 
 
-    // 목표 줌
+    /* 목표 줌 */
 
     let targetZoom =
 
@@ -847,7 +1025,7 @@ function updateCamera() {
         (maxDistance * 3);
 
 
-    // 줌 제한
+    /* 줌 제한 */
 
     targetZoom =
 
@@ -866,7 +1044,7 @@ function updateCamera() {
         );
 
 
-    // 부드러운 줌
+    /* 부드러운 줌 */
 
     zoom +=
 
@@ -878,16 +1056,58 @@ function updateCamera() {
 
 
 /* =====================================
-   실제 좌표 → 화면 좌표
+   3D 좌표 → 화면 좌표
+
+   z가 작을수록 가까움
+   z가 커질수록 멀어짐
 ===================================== */
 
-function worldToScreen(x, y) {
+function worldToScreen(x, y, z) {
+
+    let relativeX =
+        x - cameraX;
+
+    let relativeY =
+        y - cameraY;
+
+    let relativeZ =
+        z - cameraZ;
+
+
+    let perspective =
+
+        perspectiveDistance /
+
+        (
+
+            perspectiveDistance +
+
+            relativeZ
+
+        );
+
+
+    /* 카메라 뒤쪽으로 너무 멀리
+       가는 상황 방지 */
+
+    perspective =
+
+        Math.max(
+
+            0.1,
+
+            perspective
+
+        );
+
 
     return {
 
         x:
 
-            (x - cameraX)
+            relativeX
+
+            * perspective
 
             * zoom
 
@@ -898,13 +1118,22 @@ function worldToScreen(x, y) {
 
         y:
 
-            (y - cameraY)
+            relativeY
+
+            * perspective
 
             * zoom
 
             +
 
-            canvas.height / 2
+            canvas.height / 2,
+
+
+        scale:
+
+            perspective
+
+            * zoom
 
     };
 
@@ -912,7 +1141,7 @@ function worldToScreen(x, y) {
 
 
 /* =====================================
-   궤적 그리기
+   궤적 그리기 - 3차원
 ===================================== */
 
 function drawTrail(body) {
@@ -937,7 +1166,9 @@ function drawTrail(body) {
 
             body.trail[0].x,
 
-            body.trail[0].y
+            body.trail[0].y,
+
+            body.trail[0].z
 
         );
 
@@ -967,7 +1198,9 @@ function drawTrail(body) {
 
                 body.trail[i].x,
 
-                body.trail[i].y
+                body.trail[i].y,
+
+                body.trail[i].z
 
             );
 
@@ -1004,7 +1237,7 @@ function drawTrail(body) {
 
 
 /* =====================================
-   천체 그리기
+   천체 그리기 - 3차원
 ===================================== */
 
 function drawBody(body) {
@@ -1015,7 +1248,9 @@ function drawBody(body) {
 
             body.x,
 
-            body.y
+            body.y,
+
+            body.z
 
         );
 
@@ -1029,7 +1264,9 @@ function drawBody(body) {
 
         position.y,
 
-        body.size * zoom,
+        body.size
+
+        * position.scale,
 
         0,
 
@@ -1053,7 +1290,7 @@ function drawBody(body) {
 
 function animate() {
 
-    // 화면 지우기
+    /* 화면 지우기 */
 
     ctx.fillStyle =
         "black";
@@ -1072,7 +1309,7 @@ function animate() {
     );
 
 
-    // 색상 실시간 반영
+    /* 색상 실시간 반영 */
 
     if (
 
@@ -1101,26 +1338,42 @@ function animate() {
     }
 
 
-    // 운동 계산
+    /* 운동 계산 */
 
     update();
 
 
-    // 궤적 저장
+    /* 궤적 저장 */
 
     saveTrails();
 
 
-    // 카메라
+    /* 카메라 */
 
     updateCamera();
 
 
-    // 궤적
+    /* 멀리 있는 천체부터
+       그리기 위해 z값 정렬 */
+
+    let drawBodies =
+
+        [...bodies].sort(
+
+            function(A, B) {
+
+                return B.z - A.z;
+
+            }
+
+        );
+
+
+    /* 궤적 */
 
     for (
 
-        let body of bodies
+        let body of drawBodies
 
     ) {
 
@@ -1129,11 +1382,11 @@ function animate() {
     }
 
 
-    // 천체
+    /* 천체 */
 
     for (
 
-        let body of bodies
+        let body of drawBodies
 
     ) {
 
@@ -1142,7 +1395,7 @@ function animate() {
     }
 
 
-    // 반복
+    /* 반복 */
 
     requestAnimationFrame(
         animate
@@ -1164,7 +1417,9 @@ gravitySlider.addEventListener(
         G =
 
             Number(
+
                 gravitySlider.value
+
             );
 
 
@@ -1199,7 +1454,7 @@ twoBodyButton.addEventListener(
         );
 
 
-        // C 색상 설정 숨기기
+        /* C 색상 설정 숨기기 */
 
         colorCControl.classList.add(
             "hidden"
@@ -1236,7 +1491,7 @@ threeBodyButton.addEventListener(
         );
 
 
-        // C 색상 설정 보이기
+        /* C 색상 설정 보이기 */
 
         colorCControl.classList.remove(
             "hidden"
@@ -1268,12 +1523,8 @@ resetButton.addEventListener(
 
 
 /* =====================================
-   시작
+   모바일 설정창
 ===================================== */
-
-resetSimulation();
-const toggleControls =
-    document.getElementById("toggleControls");
 
 toggleControls.addEventListener(
 
@@ -1285,10 +1536,13 @@ toggleControls.addEventListener(
             "closed"
         );
 
+
         if (
+
             controls.classList.contains(
                 "closed"
             )
+
         ) {
 
             toggleControls.textContent =
@@ -1304,9 +1558,19 @@ toggleControls.addEventListener(
     }
 
 );
+
+
+/* =====================================
+   시작
+===================================== */
+
+resetSimulation();
+
 animate();
+
 
 </script>
 
 </body>
+
 </html>
