@@ -667,6 +667,9 @@ function update() {
         body.y +=
             body.vy;
 
+       body.z +=
+            body.vz;
+
     }
 
 }
@@ -687,7 +690,8 @@ function saveTrails() {
         body.trail.push({
 
             x: body.x,
-            y: body.y
+            y: body.y,
+            z: body.z
 
         });
 
@@ -852,30 +856,32 @@ function updateCamera() {
    실제 좌표 → 화면 좌표
 ===================================== */
 
-function worldToScreen(x, y) {
+   function worldToScreen(x, y, z) {
+
+    const perspectiveDistance = 1000;
+
+    const perspective =
+        perspectiveDistance /
+        (perspectiveDistance + z);
 
     return {
 
         x:
-
             (x - cameraX)
-
             * zoom
-
+            * perspective
             +
-
             canvas.width / 2,
 
-
         y:
-
             (y - cameraY)
-
             * zoom
-
+            * perspective
             +
+            canvas.height / 2,
 
-            canvas.height / 2
+        scale:
+            zoom * perspective
 
     };
 
@@ -908,7 +914,9 @@ function drawTrail(body) {
 
             body.trail[0].x,
 
-            body.trail[0].y
+            body.trail[0].y,
+
+            body.trail[0].z
 
         );
 
@@ -939,6 +947,8 @@ function drawTrail(body) {
                 body.trail[i].x,
 
                 body.trail[i].y
+
+                body.trail[i].z
 
             );
 
@@ -986,7 +996,9 @@ function drawBody(body) {
 
             body.x,
 
-            body.y
+            body.y,
+
+            body.z
 
         );
 
@@ -1000,7 +1012,7 @@ function drawBody(body) {
 
         position.y,
 
-        body.size * zoom,
+        body.size * position.scale,
 
         0,
 
