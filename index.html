@@ -132,7 +132,68 @@
             margin-bottom: 10px;
         }
     }
+/* =========================
+   설정창 접기 버튼
+========================= */
 
+#toggleControls {
+    display: none;
+}
+
+
+/* =========================
+   모바일 설정창
+========================= */
+
+@media (max-width: 600px) {
+
+    #toggleControls {
+        display: block;
+
+        position: fixed;
+
+        bottom: 15px;
+        right: 15px;
+
+        width: auto;
+
+        padding: 12px 18px;
+
+        background: rgba(30, 30, 30, 0.95);
+
+        color: white;
+
+        border: 1px solid white;
+
+        border-radius: 10px;
+
+        font-size: 16px;
+
+        z-index: 20;
+    }
+
+
+    #controls {
+
+        transition:
+            transform 0.3s ease,
+            opacity 0.3s ease;
+
+    }
+
+
+    #controls.closed {
+
+        transform:
+            translateY(calc(100% + 30px));
+
+        opacity: 0;
+
+        pointer-events: none;
+
+    }
+
+}
 </style>
 </head>
 
