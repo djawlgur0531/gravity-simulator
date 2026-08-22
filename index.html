@@ -355,6 +355,14 @@ let cameraX = 0;
 let cameraY = 0;
 let zoom = 1;
 
+let rotationX = 0;
+let rotationY = 0;
+
+let isDragging = false;
+
+let lastMouseX = 0;
+let lastMouseY = 0;
+
 
 /* =====================================
    이체 초기화
@@ -874,35 +882,103 @@ function updateCamera() {
 
    function worldToScreen(x, y, z) {
 
-    const perspectiveDistance = 1000;
+    // =============================
+    // Y축 회전
+    // 좌우 드래그
+    // =============================
+
+    const cosY =
+        Math.cos(rotationY);
+
+    const sinY =
+        Math.sin(rotationY);
+
+
+    const rotatedX =
+        x * cosY -
+        z * sinY;
+
+    const rotatedZ =
+        x * sinY +
+        z * cosY;
+
+
+    // =============================
+    // X축 회전
+    // 위아래 드래그
+    // =============================
+
+    const cosX =
+        Math.cos(rotationX);
+
+    const sinX =
+        Math.sin(rotationX);
+
+
+    const rotatedY =
+        y * cosX -
+        rotatedZ * sinX;
+
+    const finalZ =
+        y * sinX +
+        rotatedZ * cosX;
+
+
+    // =============================
+    // 원근법
+    // =============================
+
+    const perspectiveDistance = 1500;
+
+    const safeZ =
+        Math.max(
+            -1400,
+            Math.min(
+                finalZ,
+                1400
+            )
+        );
+
 
     const perspective =
         perspectiveDistance /
-        (perspectiveDistance + z);
+        (perspectiveDistance + safeZ);
+
+
+    // =============================
+    // 화면 좌표
+    // =============================
 
     return {
 
         x:
-            (x - cameraX)
+
+            (rotatedX - cameraX)
             * zoom
             * perspective
             +
+
             canvas.width / 2,
 
+
         y:
-            (y - cameraY)
+
+            (rotatedY - cameraY)
             * zoom
             * perspective
             +
+
             canvas.height / 2,
 
+
         scale:
-            zoom * perspective
+
+            zoom *
+            perspective
 
     };
 
 }
-
 /* =====================================
    궤적 그리기
 ===================================== */
@@ -1294,6 +1370,73 @@ toggleControls.addEventListener(
     }
 
 );
+   /* =====================================
+   3D 카메라 드래그 조작
+===================================== */
+
+canvas.addEventListener("pointerdown", function(event) {
+
+    // 설정창을 누른 경우에는
+    // 카메라 회전을 시작하지 않음
+    if (
+        event.target.closest("#controls") ||
+        event.target.closest("#toggleControls")
+    ) {
+        return;
+    }
+
+    isDragging = true;
+
+    lastMouseX = event.clientX;
+    lastMouseY = event.clientY;
+
+});
+
+
+window.addEventListener("pointermove", function(event) {
+
+    if (!isDragging) {
+        return;
+    }
+
+    const deltaX =
+        event.clientX - lastMouseX;
+
+    const deltaY =
+        event.clientY - lastMouseY;
+
+
+    rotationY +=
+        deltaX * 0.01;
+
+    rotationX +=
+        deltaY * 0.01;
+
+
+    // 위아래로 너무 뒤집히는 것 방지
+    rotationX = Math.max(
+        -Math.PI / 2,
+        Math.min(
+            Math.PI / 2,
+            rotationX
+        )
+    );
+
+
+    lastMouseX =
+        event.clientX;
+
+    lastMouseY =
+        event.clientY;
+
+});
+
+
+window.addEventListener("pointerup", function() {
+
+    isDragging = false;
+
+});
 animate();
 
 </script>
