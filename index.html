@@ -1185,53 +1185,39 @@ function drawAxes() {
 
 function drawTrail(body) {
 
-    if (
-
-        body.trail.length < 2
-
-    ) {
+    if (body.trail.length < 2) {
 
         return;
 
     }
 
-
-    ctx.beginPath();
-
-
-    let first =
-
-        worldToScreen(
-
-            body.trail[0].x,
-
-            body.trail[0].y,
-
-            body.trail[0].z
-
-        );
-
-
-    ctx.moveTo(
-
-        first.x,
-
-        first.y
-
-    );
+    const length = body.trail.length;
 
 
     for (
 
         let i = 1;
 
-        i < body.trail.length;
+        i < length;
 
         i++
 
     ) {
 
-        let point =
+        const previous =
+
+            worldToScreen(
+
+                body.trail[i - 1].x,
+
+                body.trail[i - 1].y,
+
+                body.trail[i - 1].z
+
+            );
+
+
+        const current =
 
             worldToScreen(
 
@@ -1244,33 +1230,59 @@ function drawTrail(body) {
             );
 
 
-        ctx.lineTo(
+        // 오래된 궤적은 투명하게
+        const alpha =
 
-            point.x,
+            i / length;
 
-            point.y
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+
+            previous.x,
+
+            previous.y
 
         );
+
+
+        ctx.lineTo(
+
+            current.x,
+
+            current.y
+
+        );
+
+
+        // 천체 색상을 그대로 사용
+        ctx.strokeStyle =
+            body.color;
+
+        ctx.globalAlpha =
+            alpha;
+
+
+        // 최근 궤적일수록 약간 두껍게
+        ctx.lineWidth =
+
+            Math.max(
+
+                1,
+
+                zoom * alpha * 1.5
+
+            );
+
+
+        ctx.stroke();
 
     }
 
 
-    ctx.strokeStyle =
-        body.color;
-
-
-    ctx.lineWidth =
-
-        Math.max(
-
-            1,
-
-            zoom
-
-        );
-
-
-    ctx.stroke();
+    // 다른 그림에 투명도가 적용되지 않도록 복구
+    ctx.globalAlpha = 1;
 
 }
 
