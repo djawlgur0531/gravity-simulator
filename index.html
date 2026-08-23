@@ -1194,69 +1194,47 @@ function drawTrail(body) {
     const length = body.trail.length;
 
 
-    for (
+    for (let i = 1; i < length; i++) {
 
-        let i = 1;
+        const previous = worldToScreen(
 
-        i < length;
+            body.trail[i - 1].x,
+            body.trail[i - 1].y,
+            body.trail[i - 1].z
 
-        i++
+        );
 
-    ) {
+        const current = worldToScreen(
 
-        const previous =
+            body.trail[i].x,
+            body.trail[i].y,
+            body.trail[i].z
 
-            worldToScreen(
-
-                body.trail[i - 1].x,
-
-                body.trail[i - 1].y,
-
-                body.trail[i - 1].z
-
-            );
+        );
 
 
-        const current =
+        // 최근 궤적일수록 급격하게 밝아짐
+        const progress = i / length;
 
-            worldToScreen(
-
-                body.trail[i].x,
-
-                body.trail[i].y,
-
-                body.trail[i].z
-
-            );
-
-
-        // 오래된 궤적은 투명하게
-        const alpha =
-
-            i / length;
+        const alpha = Math.pow(
+            progress,
+            4
+        );
 
 
         ctx.beginPath();
 
         ctx.moveTo(
-
             previous.x,
-
             previous.y
-
         );
-
 
         ctx.lineTo(
-
             current.x,
-
             current.y
-
         );
 
 
-        // 천체 색상을 그대로 사용
         ctx.strokeStyle =
             body.color;
 
@@ -1264,16 +1242,9 @@ function drawTrail(body) {
             alpha;
 
 
-        // 최근 궤적일수록 약간 두껍게
         ctx.lineWidth =
 
-            Math.max(
-
-                1,
-
-                zoom * alpha * 1.5
-
-            );
+            1 + alpha * 3;
 
 
         ctx.stroke();
@@ -1281,7 +1252,6 @@ function drawTrail(body) {
     }
 
 
-    // 다른 그림에 투명도가 적용되지 않도록 복구
     ctx.globalAlpha = 1;
 
 }
