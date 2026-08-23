@@ -1275,45 +1275,54 @@ function drawBody(body) {
     );
 
 
-    // 입체적인 구체 효과
-  const sphere = ctx.createRadialGradient(
+    // =============================
+    // 천체 전체 명암 그라데이션
+    // =============================
 
-    // 빛의 중심을 천체 왼쪽 위에 배치
-    position.x - radius * 0.35,
-    position.y - radius * 0.35,
+    const sphere = ctx.createRadialGradient(
 
-    // 시작 반경을 크게
-    radius * 0.35,
+        // 빛이 오는 방향
+        position.x - radius * 0.3,
+        position.y - radius * 0.3,
 
-    // 구체 중심
-    position.x,
-    position.y,
+        // 중심 반경 0
+        0,
 
-    // 전체 반경
-    radius * 1.2
+        // 천체 중심
+        position.x,
+        position.y,
 
-);
+        // 천체 전체 크기보다 조금 크게
+        radius * 1.15
 
-sphere.addColorStop(
-    0,
-    "rgba(255,255,255,0.8)"
-);
+    );
 
-sphere.addColorStop(
-    0.25,
-    body.color
-);
 
-sphere.addColorStop(
-    0.65,
-    body.color
-);
+    // 밝은 쪽
+    sphere.addColorStop(
+        0,
+        body.color
+    );
 
-sphere.addColorStop(
-    1,
-    body.color
-);
-    // 천체 그리기
+
+    // 중간
+    sphere.addColorStop(
+        0.55,
+        body.color
+    );
+
+
+    // 가장자리
+    sphere.addColorStop(
+        1,
+        "rgba(0,0,0,0.45)"
+    );
+
+
+    // =============================
+    // 천체 본체
+    // =============================
+
     ctx.beginPath();
 
     ctx.arc(
@@ -1325,6 +1334,54 @@ sphere.addColorStop(
     );
 
     ctx.fillStyle = sphere;
+
+    ctx.fill();
+
+
+    // =============================
+    // 빛나는 작은 하이라이트
+    // =============================
+
+    const highlightRadius =
+        radius * 0.22;
+
+
+    const highlight = ctx.createRadialGradient(
+
+        position.x - radius * 0.28,
+        position.y - radius * 0.28,
+        0,
+
+        position.x - radius * 0.28,
+        position.y - radius * 0.28,
+        highlightRadius
+
+    );
+
+
+    highlight.addColorStop(
+        0,
+        "rgba(255,255,255,0.45)"
+    );
+
+    highlight.addColorStop(
+        1,
+        "rgba(255,255,255,0)"
+    );
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+        position.x - radius * 0.28,
+        position.y - radius * 0.28,
+        highlightRadius,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fillStyle = highlight;
+
     ctx.fill();
 
 }
