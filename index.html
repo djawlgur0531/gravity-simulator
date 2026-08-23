@@ -1276,43 +1276,46 @@ function drawBody(body) {
 
 
     // =============================
-    // 강한 빛 번짐
+    // 천체 본체
     // =============================
 
-    ctx.save();
+    const sphere = ctx.createRadialGradient(
 
-    ctx.globalAlpha = 0.8;
+        // 빛이 오는 방향
+        position.x - radius * 0.35,
+        position.y - radius * 0.35,
+        radius * 0.05,
 
-    const glow = ctx.createRadialGradient(
-
+        // 구체 중심
         position.x,
         position.y,
-        0,
-
-        position.x,
-        position.y,
-        radius * 6
+        radius
 
     );
 
-    glow.addColorStop(
+
+    // 작은 하이라이트
+    sphere.addColorStop(
         0,
+        "rgba(255,255,255,0.9)"
+    );
+
+    // 밝은 부분
+    sphere.addColorStop(
+        0.12,
         body.color
     );
 
-    glow.addColorStop(
-        0.15,
+    // 기본 색
+    sphere.addColorStop(
+        0.55,
         body.color
     );
 
-    glow.addColorStop(
-        0.4,
-        "rgba(255,255,255,0.15)"
-    );
-
-    glow.addColorStop(
+    // 가장자리 어둡게
+    sphere.addColorStop(
         1,
-        "rgba(0,0,0,0)"
+        "rgba(0,0,0,0.9)"
     );
 
 
@@ -1321,16 +1324,38 @@ function drawBody(body) {
     ctx.arc(
         position.x,
         position.y,
-        radius * 6,
+        radius,
         0,
         Math.PI * 2
     );
 
-    ctx.fillStyle = glow;
+    ctx.fillStyle = sphere;
 
     ctx.fill();
 
-    ctx.restore();
+
+    // =============================
+    // 아주 약한 외곽선
+    // =============================
+
+    ctx.beginPath();
+
+    ctx.arc(
+        position.x,
+        position.y,
+        radius,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.strokeStyle =
+        "rgba(255,255,255,0.25)";
+
+    ctx.lineWidth = 1;
+
+    ctx.stroke();
+
+}
 
 
     // =============================
