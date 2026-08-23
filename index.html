@@ -1276,38 +1276,36 @@ function drawBody(body) {
 
 
     // 입체적인 구체 효과
-    const sphere = ctx.createRadialGradient(
+  const sphere = ctx.createRadialGradient(
 
-        // 빛이 닿는 위치
-        position.x - radius * 0.35,
-        position.y - radius * 0.35,
-        radius * 0.05,
+    // 빛의 중심을 천체 왼쪽 위에 배치
+    position.x - radius * 0.35,
+    position.y - radius * 0.35,
 
-        // 구체 전체
-        position.x,
-        position.y,
-        radius
+    // 시작 반경을 크게
+    radius * 0.35,
 
-    );
+    // 구체 중심
+    position.x,
+    position.y,
 
+    // 전체 반경
+    radius * 1.2
+
+);
 
 sphere.addColorStop(
     0,
-    "rgba(255,255,255,1)"
+    "rgba(255,255,255,0.8)"
 );
 
 sphere.addColorStop(
-    0.08,
-    "rgba(255,255,255,0.7)"
-);
-
-sphere.addColorStop(
-    0.22,
+    0.25,
     body.color
 );
 
 sphere.addColorStop(
-    0.7,
+    0.65,
     body.color
 );
 
@@ -1315,7 +1313,6 @@ sphere.addColorStop(
     1,
     body.color
 );
-
     // 천체 그리기
     ctx.beginPath();
 
