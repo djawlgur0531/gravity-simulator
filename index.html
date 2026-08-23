@@ -1179,6 +1179,111 @@ function drawAxes() {
     ctx.fill();
 
 }
+   /* =====================================
+   3D 바닥 격자
+===================================== */
+
+function drawGrid() {
+
+    const gridSize = 800;
+    const spacing = 50;
+
+
+    ctx.lineWidth = 1;
+
+
+    // X 방향 선
+
+    for (
+
+        let z = -gridSize;
+
+        z <= gridSize;
+
+        z += spacing
+
+    ) {
+
+        const start = worldToScreen(
+            -gridSize,
+            0,
+            z
+        );
+
+        const end = worldToScreen(
+            gridSize,
+            0,
+            z
+        );
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            start.x,
+            start.y
+        );
+
+        ctx.lineTo(
+            end.x,
+            end.y
+        );
+
+
+        ctx.strokeStyle =
+            "rgba(255,255,255,0.12)";
+
+        ctx.stroke();
+
+    }
+
+
+    // Z 방향 선
+
+    for (
+
+        let x = -gridSize;
+
+        x <= gridSize;
+
+        x += spacing
+
+    ) {
+
+        const start = worldToScreen(
+            x,
+            0,
+            -gridSize
+        );
+
+        const end = worldToScreen(
+            x,
+            0,
+            gridSize
+        );
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            start.x,
+            start.y
+        );
+
+        ctx.lineTo(
+            end.x,
+            end.y
+        );
+
+
+        ctx.strokeStyle =
+            "rgba(255,255,255,0.12)";
+
+        ctx.stroke();
+
+    }
+
+}
 /* =====================================
    궤적 그리기
 ===================================== */
@@ -1275,48 +1380,6 @@ function drawBody(body) {
     );
 
 
-    // 빛이 왼쪽 위에서 오는 것처럼 만드는 그라데이션
-    const sphere = ctx.createRadialGradient(
-
-        position.x - radius * 0.35,
-        position.y - radius * 0.35,
-        radius * 0.1,
-
-        position.x,
-        position.y,
-        radius
-
-    );
-
-
-    // 중심 하이라이트
-    sphere.addColorStop(
-        0,
-        "rgba(255,255,255,0.85)"
-    );
-
-
-    // 밝은 천체 색
-    sphere.addColorStop(
-        0.18,
-        body.color
-    );
-
-
-    // 중간 색
-    sphere.addColorStop(
-        0.65,
-        body.color
-    );
-
-
-    // 끝부분만 살짝 어둡게
-    sphere.addColorStop(
-        1,
-        "rgba(0,0,0,0.35)"
-    );
-
-
     ctx.beginPath();
 
     ctx.arc(
@@ -1327,8 +1390,8 @@ function drawBody(body) {
         Math.PI * 2
     );
 
-
-    ctx.fillStyle = sphere;
+    ctx.fillStyle =
+        body.color;
 
     ctx.fill();
 
