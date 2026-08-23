@@ -1264,84 +1264,128 @@ function drawTrail(body) {
 function drawBody(body) {
 
     const position = worldToScreen(
-
         body.x,
         body.y,
         body.z
+    );
 
+    const radius = Math.max(
+        4,
+        body.size * position.scale
     );
 
 
-    const radius =
-
-        Math.max(
-            2,
-            body.size * position.scale
-        );
-
-
     // =============================
-    // 빛나는 외곽 효과
+    // 강한 빛 번짐
     // =============================
+
+    ctx.save();
+
+    ctx.globalAlpha = 0.8;
 
     const glow = ctx.createRadialGradient(
 
         position.x,
         position.y,
-        radius * 0.3,
+        0,
 
         position.x,
         position.y,
-        radius * 3
+        radius * 6
 
     );
 
-
     glow.addColorStop(
-
         0,
-
         body.color
-
     );
 
-
     glow.addColorStop(
-
-        0.3,
-
+        0.15,
         body.color
-
     );
 
+    glow.addColorStop(
+        0.4,
+        "rgba(255,255,255,0.15)"
+    );
 
     glow.addColorStop(
-
         1,
-
-        "transparent"
-
+        "rgba(0,0,0,0)"
     );
 
 
     ctx.beginPath();
 
     ctx.arc(
-
         position.x,
         position.y,
-        radius * 3,
-
+        radius * 6,
         0,
         Math.PI * 2
-
     );
-
 
     ctx.fillStyle = glow;
 
     ctx.fill();
 
+    ctx.restore();
+
+
+    // =============================
+    // 입체적인 구체
+    // =============================
+
+    const sphere = ctx.createRadialGradient(
+
+        position.x - radius * 0.35,
+        position.y - radius * 0.35,
+        radius * 0.05,
+
+        position.x,
+        position.y,
+        radius
+
+    );
+
+
+    sphere.addColorStop(
+        0,
+        "white"
+    );
+
+    sphere.addColorStop(
+        0.12,
+        body.color
+    );
+
+    sphere.addColorStop(
+        0.55,
+        body.color
+    );
+
+    sphere.addColorStop(
+        1,
+        "rgba(0,0,0,0.85)"
+    );
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+        position.x,
+        position.y,
+        radius,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fillStyle = sphere;
+
+    ctx.fill();
+
+}
 
     // =============================
     // 천체 자체
