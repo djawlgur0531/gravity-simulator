@@ -1232,7 +1232,7 @@ function drawGrid() {
 
 
         ctx.strokeStyle =
-            "rgba(255,255,255,0.12)";
+            "rgba(255,255,255,0.28)";
 
         ctx.stroke();
 
@@ -1419,6 +1419,9 @@ function animate() {
 
     );
 
+    // 3D 바닥 격자
+
+   drawGrid();
 
     // 색상 실시간 반영
 
@@ -1463,10 +1466,7 @@ function animate() {
 
     updateCamera();
 
-   // 3D 바닥 격자
-
-drawGrid();
-
+   
    // 3D 방향 축
 
     drawAxes();
