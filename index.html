@@ -1189,11 +1189,14 @@ function drawGrid() {
     const gridSize = 800;
     const spacing = 50;
 
+    // 격자를 화면에서 아래로 내리는 값
+    const gridOffsetY = 180;
 
     ctx.lineWidth = 1;
 
 
     // X 방향 선
+    // 화면에서 세로에 가깝게 보이는 선
 
     for (
 
@@ -1222,15 +1225,16 @@ function drawGrid() {
 
         ctx.moveTo(
             start.x,
-            start.y
+            start.y + gridOffsetY
         );
 
         ctx.lineTo(
             end.x,
-            end.y
+            end.y + gridOffsetY
         );
 
 
+        // 이쪽을 진하게
         ctx.strokeStyle =
             "rgba(255,255,255,0.28)";
 
@@ -1240,6 +1244,7 @@ function drawGrid() {
 
 
     // Z 방향 선
+    // 화면에서 가로에 가깝게 보이는 선
 
     for (
 
@@ -1268,17 +1273,18 @@ function drawGrid() {
 
         ctx.moveTo(
             start.x,
-            start.y
+            start.y + gridOffsetY
         );
 
         ctx.lineTo(
             end.x,
-            end.y
+            end.y + gridOffsetY
         );
 
 
+        // 이쪽은 연하게
         ctx.strokeStyle =
-            "rgba(255,255,255,0.12)";
+            "rgba(255,255,255,0.08)";
 
         ctx.stroke();
 
@@ -1419,9 +1425,6 @@ function animate() {
 
     );
 
-    // 3D 바닥 격자
-
-   drawGrid();
 
     // 색상 실시간 반영
 
@@ -1465,6 +1468,10 @@ function animate() {
     // 카메라
 
     updateCamera();
+
+   // 3D 바닥 격자
+
+   drawGrid();
 
    
 
