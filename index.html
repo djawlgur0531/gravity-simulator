@@ -1278,93 +1278,6 @@ function drawBody(body) {
     // 입체적인 구체 효과
     const sphere = ctx.createRadialGradient(
 
-        position.x - radius * 0.35,
-        position.y - radius * 0.35,
-        radius * 0.05,
-
-        position.x,
-        position.y,
-        radius
-
-    );
-
-
-    sphere.addColorStop(
-        0,
-        "rgba(255,255,255,0.9)"
-    );
-
-    sphere.addColorStop(
-        0.15,
-        body.color
-    );
-
-    sphere.addColorStop(
-        0.6,
-        body.color
-    );
-
-    sphere.addColorStop(
-        1,
-        "rgba(0,0,0,0.9)"
-    );
-
-
-    ctx.beginPath();
-
-    ctx.arc(
-        position.x,
-        position.y,
-        radius,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fillStyle = sphere;
-    ctx.fill();
-
-
-    // 약한 외곽선
-    ctx.beginPath();
-
-    ctx.arc(
-        position.x,
-        position.y,
-        radius,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.strokeStyle =
-        "rgba(255,255,255,0.25)";
-
-    ctx.lineWidth = 1;
-
-    ctx.stroke();
-
-}
-
-   /* =====================================
-   천체 그리기
-===================================== */
-
-function drawBody(body) {
-
-    const position = worldToScreen(
-        body.x,
-        body.y,
-        body.z
-    );
-
-    const radius = Math.max(
-        4,
-        body.size * position.scale
-    );
-
-
-    // 입체적인 구체 효과
-    const sphere = ctx.createRadialGradient(
-
         // 빛이 닿는 위치
         position.x - radius * 0.35,
         position.y - radius * 0.35,
@@ -1384,19 +1297,16 @@ function drawBody(body) {
         "rgba(255,255,255,0.9)"
     );
 
-
     // 천체 색
     sphere.addColorStop(
         0.15,
         body.color
     );
 
-
     sphere.addColorStop(
         0.6,
         body.color
     );
-
 
     // 가장자리 어둡게
     sphere.addColorStop(
@@ -1417,7 +1327,6 @@ function drawBody(body) {
     );
 
     ctx.fillStyle = sphere;
-
     ctx.fill();
 
 
