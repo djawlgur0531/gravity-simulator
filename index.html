@@ -1263,34 +1263,148 @@ function drawTrail(body) {
 
 function drawBody(body) {
 
-    let position =
+    const position = worldToScreen(
 
-        worldToScreen(
+        body.x,
+        body.y,
+        body.z
 
-            body.x,
-            body.y,
-            body.z
+    );
 
+
+    const radius =
+
+        Math.max(
+            2,
+            body.size * position.scale
         );
+
+
+    // =============================
+    // 빛나는 외곽 효과
+    // =============================
+
+    const glow = ctx.createRadialGradient(
+
+        position.x,
+        position.y,
+        radius * 0.3,
+
+        position.x,
+        position.y,
+        radius * 3
+
+    );
+
+
+    glow.addColorStop(
+
+        0,
+
+        body.color
+
+    );
+
+
+    glow.addColorStop(
+
+        0.3,
+
+        body.color
+
+    );
+
+
+    glow.addColorStop(
+
+        1,
+
+        "transparent"
+
+    );
+
 
     ctx.beginPath();
 
     ctx.arc(
 
         position.x,
-
         position.y,
-
-        body.size * position.scale,
+        radius * 3,
 
         0,
-
         Math.PI * 2
 
     );
 
-    ctx.fillStyle =
-        body.color;
+
+    ctx.fillStyle = glow;
+
+    ctx.fill();
+
+
+    // =============================
+    // 천체 자체
+    // =============================
+
+    const sphere = ctx.createRadialGradient(
+
+        position.x - radius * 0.35,
+        position.y - radius * 0.35,
+        radius * 0.1,
+
+        position.x,
+        position.y,
+        radius
+
+    );
+
+
+    // 빛이 닿는 부분
+    sphere.addColorStop(
+
+        0,
+
+        "white"
+
+    );
+
+
+    // 천체 기본 색
+    sphere.addColorStop(
+
+        0.25,
+
+        body.color
+
+    );
+
+
+    // 가장자리 어둡게
+    sphere.addColorStop(
+
+        1,
+
+        "rgba(0, 0, 0, 0.7)"
+
+    );
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+
+        position.x,
+        position.y,
+        radius,
+
+        0,
+        Math.PI * 2
+
+    );
+
+
+    ctx.fillStyle = sphere;
 
     ctx.fill();
 
