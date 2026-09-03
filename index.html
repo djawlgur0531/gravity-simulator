@@ -7,6 +7,54 @@
 <title>이체 · 삼체 문제 시뮬레이터</title>
 
 <style>
+   #distanceWarning {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1000;
+}
+
+.warningBox {
+    width: min(420px, 85vw);
+    padding: 28px;
+    border-radius: 16px;
+    background: #111;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    text-align: center;
+    color: white;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+}
+
+.warningBox h2 {
+    margin-top: 0;
+}
+
+.warningBox p {
+    color: #ccc;
+}
+
+.distanceText {
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+.warningButtons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.warningButtons button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
     * {
         box-sizing: border-box;
     }
@@ -340,6 +388,11 @@ const controls =
 ===================================== */
 
 let G = 1;
+
+let paused = false;
+let distanceWarningShown = false;
+
+const MAX_DISTANCE = 1800;
 
 let bodies = [];
 
@@ -697,8 +750,86 @@ function update() {
     }
 
 }
+function checkDistanceLimit() {
+    if (bodies.length === 0 || paused) return;
 
+    // 모든 천체의 중심점 계산
+    let centerX = 0;
+    let centerY = 0;
+    let centerZ = 0;
 
+    for (const body of bodies) {
+        centerX += body.x;
+        centerY += body.y;
+        centerZ += body.z;
+    }
+
+    centerX /= bodies.length;
+    centerY /= bodies.length;
+    centerZ /= bodies.length;
+
+    // 중심에서 가장 멀리 떨어진 천체의 거리 확인
+    let maxDistance = 0;
+
+    for (const body of bodies) {
+        const dx = body.x - centerX;
+        const dy = body.y - centerY;
+        const dz = body.z - centerZ;
+
+        const distance = Math.sqrt(
+            dx * dx +
+            dy * dy +
+            dz * dz
+        );
+
+        maxDistance = Math.max(maxDistance, distance);
+    }
+
+    if (maxDistance > MAX_DISTANCE) {
+        paused = true;
+        distanceWarningShown = true;
+
+        showDistanceWarning(maxDistance);
+    }
+}
+function showDistanceWarning(distance) {
+    const warning = document.createElement("div");
+
+    warning.id = "distanceWarning";
+
+    warning.innerHTML = `
+        <div class="warningBox">
+            <h2>⚠️ Simulation Paused</h2>
+            <p>
+                Celestial bodies have moved too far apart.
+            </p>
+            <p class="distanceText">
+                Distance from center: ${Math.round(distance)}
+            </p>
+
+            <div class="warningButtons">
+                <button id="continueSimulation">Continue</button>
+                <button id="resetSimulation">Reset</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(warning);
+
+    document.getElementById("continueSimulation").onclick = () => {
+        paused = false;
+        distanceWarningShown = false;
+        warning.remove();
+    };
+
+    document.getElementById("resetSimulation").onclick = () => {
+        warning.remove();
+        paused = false;
+        distanceWarningShown = false;
+
+        initializeSimulation();
+    };
+}
 /* =====================================
    궤적 저장
 ===================================== */
@@ -1383,19 +1514,13 @@ function animate() {
     }
 
 
-    // 운동 계산
-
+  if (!paused) {
     update();
-
-
-    // 궤적 저장
-
     saveTrails();
-
-
-    // 카메라
-
     updateCamera();
+
+    checkDistanceLimit();
+}
 
    // 3D 바닥 격자
 
