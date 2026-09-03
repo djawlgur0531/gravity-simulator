@@ -1185,111 +1185,39 @@ function drawAxes() {
 ===================================== */
 
 function drawGrid() {
-
     const gridSize = 800;
     const spacing = 50;
 
-    // 격자를 화면에서 아래로 내리는 값
-    const gridOffsetY = 180;
+    // 구체보다 아래에 있는 바닥
+    const gridY = -250;
 
     ctx.lineWidth = 1;
 
-
     // X 방향 선
-    // 화면에서 세로에 가깝게 보이는 선
-
-    for (
-
-        let z = -gridSize;
-
-        z <= gridSize;
-
-        z += spacing
-
-    ) {
-
-        const start = worldToScreen(
-            -gridSize,
-            0,
-            z
-        );
-
-        const end = worldToScreen(
-            gridSize,
-            0,
-            z
-        );
-
+    for (let z = -gridSize; z <= gridSize; z += spacing) {
+        const start = worldToScreen(-gridSize, gridY, z);
+        const end = worldToScreen(gridSize, gridY, z);
 
         ctx.beginPath();
+        ctx.moveTo(start.x, start.y);
+        ctx.lineTo(end.x, end.y);
 
-        ctx.moveTo(
-            start.x,
-            start.y + gridOffsetY
-        );
-
-        ctx.lineTo(
-            end.x,
-            end.y + gridOffsetY
-        );
-
-
-        // 이쪽을 진하게
-        ctx.strokeStyle =
-            "rgba(255,255,255,0.28)";
-
+        ctx.strokeStyle = "rgba(255,255,255,0.18)";
         ctx.stroke();
-
     }
-
 
     // Z 방향 선
-    // 화면에서 가로에 가깝게 보이는 선
-
-    for (
-
-        let x = -gridSize;
-
-        x <= gridSize;
-
-        x += spacing
-
-    ) {
-
-        const start = worldToScreen(
-            x,
-            0,
-            -gridSize
-        );
-
-        const end = worldToScreen(
-            x,
-            0,
-            gridSize
-        );
-
+    for (let x = -gridSize; x <= gridSize; x += spacing) {
+        const start = worldToScreen(x, gridY, -gridSize);
+        const end = worldToScreen(x, gridY, gridSize);
 
         ctx.beginPath();
+        ctx.moveTo(start.x, start.y);
+        ctx.lineTo(end.x, end.y);
 
-        ctx.moveTo(
-            start.x,
-            start.y + gridOffsetY
-        );
-
-        ctx.lineTo(
-            end.x,
-            end.y + gridOffsetY
-        );
-
-
-        // 이쪽은 연하게
-        ctx.strokeStyle =
-            "rgba(255,255,255,0.08)";
-
+        ctx.strokeStyle = "rgba(255,255,255,0.18)";
         ctx.stroke();
-
     }
-
 }
 /* =====================================
    궤적 그리기
