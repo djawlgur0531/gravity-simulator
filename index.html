@@ -785,14 +785,19 @@ function checkDistanceLimit() {
         maxDistance = Math.max(maxDistance, distance);
     }
 
-    if (maxDistance > MAX_DISTANCE) {
-        paused = true;
-        distanceWarningShown = true;
+   if (maxDistance > MAX_DISTANCE && !distanceWarningShown) {
+    paused = true;
+    distanceWarningShown = true;
 
-        showDistanceWarning(maxDistance);
-    }
+    showDistanceWarning(maxDistance);
+}
 }
 function showDistanceWarning(distance) {
+    // 이미 경고창이 있으면 다시 만들지 않음
+    if (document.getElementById("distanceWarning")) {
+        return;
+    }
+
     const warning = document.createElement("div");
 
     warning.id = "distanceWarning";
@@ -800,34 +805,44 @@ function showDistanceWarning(distance) {
     warning.innerHTML = `
         <div class="warningBox">
             <h2>⚠️ Simulation Paused</h2>
+
             <p>
                 Celestial bodies have moved too far apart.
             </p>
+
             <p class="distanceText">
                 Distance from center: ${Math.round(distance)}
             </p>
 
             <div class="warningButtons">
-                <button id="continueSimulation">Continue</button>
-                <button id="resetSimulation">Reset</button>
+                <button id="continueSimulation">
+                    Continue
+                </button>
+
+                <button id="resetSimulation">
+                    Reset
+                </button>
             </div>
         </div>
     `;
 
     document.body.appendChild(warning);
 
-    document.getElementById("continueSimulation").onclick = () => {
+    // 계속 실행
+    document.getElementById("continueSimulation").onclick = function() {
         paused = false;
         distanceWarningShown = false;
         warning.remove();
     };
 
-    document.getElementById("resetSimulation").onclick = () => {
+    // 초기화
+    document.getElementById("resetSimulation").onclick = function() {
         warning.remove();
+
         paused = false;
         distanceWarningShown = false;
 
-        initializeSimulation();
+        resetSimulation();   // ← 이게 중요!
     };
 }
 /* =====================================
