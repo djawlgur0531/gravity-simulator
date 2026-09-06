@@ -1317,92 +1317,111 @@ function drawGrid() {
     const gridSize = 1200;
     const spacing = 50;
 
-    // 바닥 높이
-    // 천체보다 충분히 아래에 배치
-    const floorY = -300;
+    // 천체가 떠 있는 바닥
+    const floorY = -150;
 
     ctx.save();
 
     ctx.lineWidth = 1;
-
     ctx.strokeStyle =
         "rgba(255,255,255,0.12)";
 
 
-    // -----------------------------
-    // X 방향 선
-    // -----------------------------
-
+    // X 방향
     for (
         let z = -gridSize;
         z <= gridSize;
         z += spacing
     ) {
 
-        const start = worldToScreen(
-            -gridSize,
-            floorY,
-            z
-        );
-
-        const end = worldToScreen(
-            gridSize,
-            floorY,
-            z
-        );
-
-
         ctx.beginPath();
 
-        ctx.moveTo(
-            start.x,
-            start.y
-        );
+        // 선을 여러 점으로 나눠서 그린다
+        // → 원근 투영 때문에 휘어지는 문제 감소
 
-        ctx.lineTo(
-            end.x,
-            end.y
-        );
+        let first = true;
+
+        for (
+            let x = -gridSize;
+            x <= gridSize;
+            x += 20
+        ) {
+
+            const p =
+                worldToScreen(
+                    x,
+                    floorY,
+                    z
+                );
+
+            if (first) {
+
+                ctx.moveTo(
+                    p.x,
+                    p.y
+                );
+
+                first = false;
+
+            } else {
+
+                ctx.lineTo(
+                    p.x,
+                    p.y
+                );
+
+            }
+
+        }
 
         ctx.stroke();
 
     }
 
 
-    // -----------------------------
-    // Z 방향 선
-    // -----------------------------
-
+    // Z 방향
     for (
         let x = -gridSize;
         x <= gridSize;
         x += spacing
     ) {
 
-        const start = worldToScreen(
-            x,
-            floorY,
-            -gridSize
-        );
-
-        const end = worldToScreen(
-            x,
-            floorY,
-            gridSize
-        );
-
-
         ctx.beginPath();
 
-        ctx.moveTo(
-            start.x,
-            start.y
-        );
+        let first = true;
 
-        ctx.lineTo(
-            end.x,
-            end.y
-        );
+        for (
+            let z = -gridSize;
+            z <= gridSize;
+            z += 20
+        ) {
+
+            const p =
+                worldToScreen(
+                    x,
+                    floorY,
+                    z
+                );
+
+            if (first) {
+
+                ctx.moveTo(
+                    p.x,
+                    p.y
+                );
+
+                first = false;
+
+            } else {
+
+                ctx.lineTo(
+                    p.x,
+                    p.y
+                );
+
+            }
+
+        }
 
         ctx.stroke();
 
