@@ -1026,19 +1026,18 @@ function updateCamera() {
    실제 좌표 → 화면 좌표
 ===================================== */
 
-   function worldToScreen(x, y, z) {
+  /* =====================================
+   실제 좌표 → 화면 좌표
+===================================== */
 
-    // =============================
+function worldToScreen(x, y, z) {
+
+    // -----------------------------
     // Y축 회전
-    // 좌우 드래그
-    // =============================
+    // -----------------------------
 
-    const cosY =
-        Math.cos(rotationY);
-
-    const sinY =
-        Math.sin(rotationY);
-
+    const cosY = Math.cos(rotationY);
+    const sinY = Math.sin(rotationY);
 
     const rotatedX =
         x * cosY -
@@ -1049,17 +1048,12 @@ function updateCamera() {
         z * cosY;
 
 
-    // =============================
+    // -----------------------------
     // X축 회전
-    // 위아래 드래그
-    // =============================
+    // -----------------------------
 
-    const cosX =
-        Math.cos(rotationX);
-
-    const sinX =
-        Math.sin(rotationX);
-
+    const cosX = Math.cos(rotationX);
+    const sinX = Math.sin(rotationX);
 
     const rotatedY =
         y * cosX -
@@ -1070,57 +1064,45 @@ function updateCamera() {
         rotatedZ * cosX;
 
 
-    // =============================
+    // -----------------------------
     // 원근법
-    // =============================
+    // -----------------------------
 
-    const perspectiveDistance = 600;
+    const perspectiveDistance = 1200;
 
-    const safeZ =
-        Math.max(
-            -500,
-            Math.min(
-                finalZ,
-                500
-            )
-        );
-
+    // 기존 safeZ 제한 제거
+    // → 격자가 가까워졌을 때 휘어지는 문제 방지
 
     const perspective =
         perspectiveDistance /
-        (perspectiveDistance + safeZ);
+        (perspectiveDistance + finalZ);
 
 
-    // =============================
+    // -----------------------------
     // 화면 좌표
-    // =============================
+    // -----------------------------
 
     return {
 
         x:
-
             (rotatedX - cameraX)
             * zoom
             * perspective
             +
-
             canvas.width / 2,
 
-
         y:
-
             (rotatedY - cameraY)
             * zoom
             * perspective
             +
-
             canvas.height / 2,
 
-
         scale:
+            zoom * perspective,
 
-            zoom *
-            perspective
+        depth:
+            finalZ
 
     };
 
@@ -1326,44 +1308,108 @@ function drawAxes() {
 
 }
    
-   /* =====================================
+/* =====================================
    3D 바닥 격자
 ===================================== */
 
 function drawGrid() {
-    const gridSize = 800;
+
+    const gridSize = 1200;
     const spacing = 50;
 
-    // 구체보다 아래에 있는 바닥
-    const gridY = -250;
+    // 바닥 높이
+    // 천체보다 충분히 아래에 배치
+    const floorY = -300;
+
+    ctx.save();
 
     ctx.lineWidth = 1;
 
+    ctx.strokeStyle =
+        "rgba(255,255,255,0.12)";
+
+
+    // -----------------------------
     // X 방향 선
-    for (let z = -gridSize; z <= gridSize; z += spacing) {
-        const start = worldToScreen(-gridSize, gridY, z);
-        const end = worldToScreen(gridSize, gridY, z);
+    // -----------------------------
+
+    for (
+        let z = -gridSize;
+        z <= gridSize;
+        z += spacing
+    ) {
+
+        const start = worldToScreen(
+            -gridSize,
+            floorY,
+            z
+        );
+
+        const end = worldToScreen(
+            gridSize,
+            floorY,
+            z
+        );
+
 
         ctx.beginPath();
-        ctx.moveTo(start.x, start.y);
-        ctx.lineTo(end.x, end.y);
 
-        ctx.strokeStyle = "rgba(255,255,255,0.18)";
+        ctx.moveTo(
+            start.x,
+            start.y
+        );
+
+        ctx.lineTo(
+            end.x,
+            end.y
+        );
+
         ctx.stroke();
+
     }
 
+
+    // -----------------------------
     // Z 방향 선
-    for (let x = -gridSize; x <= gridSize; x += spacing) {
-        const start = worldToScreen(x, gridY, -gridSize);
-        const end = worldToScreen(x, gridY, gridSize);
+    // -----------------------------
+
+    for (
+        let x = -gridSize;
+        x <= gridSize;
+        x += spacing
+    ) {
+
+        const start = worldToScreen(
+            x,
+            floorY,
+            -gridSize
+        );
+
+        const end = worldToScreen(
+            x,
+            floorY,
+            gridSize
+        );
+
 
         ctx.beginPath();
-        ctx.moveTo(start.x, start.y);
-        ctx.lineTo(end.x, end.y);
 
-        ctx.strokeStyle = "rgba(255,255,255,0.18)";
+        ctx.moveTo(
+            start.x,
+            start.y
+        );
+
+        ctx.lineTo(
+            end.x,
+            end.y
+        );
+
         ctx.stroke();
+
     }
+
+    ctx.restore();
+
 }
 /* =====================================
    궤적 그리기
@@ -1481,32 +1527,25 @@ function drawBody(body) {
 
 function animate() {
 
-    // 화면 지우기
+    // =============================
+    // 1. 화면 지우기
+    // =============================
 
-    ctx.fillStyle =
-        "black";
-
+    ctx.fillStyle = "black";
 
     ctx.fillRect(
-
         0,
-
         0,
-
         canvas.width,
-
         canvas.height
-
     );
 
 
-    // 색상 실시간 반영
+    // =============================
+    // 2. 색상 실시간 반영
+    // =============================
 
-    if (
-
-        bodies.length >= 2
-
-    ) {
+    if (bodies.length >= 2) {
 
         bodies[0].color =
             colorAInput.value;
@@ -1517,11 +1556,7 @@ function animate() {
     }
 
 
-    if (
-
-        bodies.length === 3
-
-    ) {
+    if (bodies.length === 3) {
 
         bodies[2].color =
             colorCInput.value;
@@ -1529,57 +1564,66 @@ function animate() {
     }
 
 
-  if (!paused) {
-    update();
-    saveTrails();
-    updateCamera();
+    // =============================
+    // 3. 물리 계산
+    // =============================
 
-    checkDistanceLimit();
-}
+    if (!paused) {
 
-   // 3D 바닥 격자
+        update();
 
-   drawGrid();
+        saveTrails();
 
-   
+        updateCamera();
+
+        checkDistanceLimit();
+
+    }
 
 
-    // 궤적
+    // =============================
+    // 4. 바닥 격자
+    // =============================
 
-    for (
+    drawGrid();
 
-        let body of bodies
 
-    ) {
+    // =============================
+    // 5. 궤적
+    // =============================
+
+    for (let body of bodies) {
 
         drawTrail(body);
 
     }
 
 
-    // 천체
+    // =============================
+    // 6. 천체
+    // =============================
 
-    for (
-
-        let body of bodies
-
-    ) {
+    for (let body of bodies) {
 
         drawBody(body);
 
     }
 
 
-    // 반복
+    // =============================
+    // 7. 3D 방향 축
+    // =============================
+
+    drawAxes();
+
+
+    // =============================
+    // 8. 다음 프레임
+    // =============================
 
     requestAnimationFrame(
         animate
     );
-
-   // 3D 방향 축
-
-    drawAxes();
-
 
 }
 
