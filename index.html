@@ -1313,120 +1313,110 @@ function drawAxes() {
 
 function drawGrid() {
 
-    const gridSize = 1000;
-    const spacing = 50;
+    // =================================
+    // 화면에 고정된 바닥 격자
+    // =================================
+
+    const horizonY =
+        canvas.height * 0.68;
+
+    const bottomY =
+        canvas.height;
+
+
+    ctx.save();
 
     ctx.lineWidth = 1;
 
-    ctx.strokeStyle =
-        "rgba(255,255,255,0.16)";
+
+    // =================================
+    // 세로 방향 격자
+    // =================================
+    // 위쪽 한 점으로 모이지만
+    // 전부 직선으로 그린다.
+
+    const centerX =
+        canvas.width / 2;
 
 
-    // -----------------------------
-    // 선 하나를 안전하게 그리는 함수
-    // -----------------------------
+    const lineCount = 24;
 
-    function drawGridLine(
-        x1, y1, z1,
-        x2, y2, z2
+
+    for (
+        let i = -lineCount;
+        i <= lineCount;
+        i++
     ) {
 
-        const p1 =
-            worldToScreen(
-                x1,
-                y1,
-                z1
-            );
-
-        const p2 =
-            worldToScreen(
-                x2,
-                y2,
-                z2
-            );
-
-
-        // 카메라 뒤쪽으로 지나가는 선은 그리지 않음
-        if (
-            p1.depth < 700 &&
-            p2.depth < 700
-        ) {
-            return;
-        }
-
-
-        // 화면에서 지나치게 큰 선 제거
-        if (
-            Math.abs(p1.x) > canvas.width * 3 ||
-            Math.abs(p1.y) > canvas.height * 3 ||
-            Math.abs(p2.x) > canvas.width * 3 ||
-            Math.abs(p2.y) > canvas.height * 3
-        ) {
-            return;
-        }
+        const bottomX =
+            centerX +
+            i * (canvas.width / 24);
 
 
         ctx.beginPath();
 
         ctx.moveTo(
-            p1.x,
-            p1.y
+            centerX,
+            horizonY
         );
 
         ctx.lineTo(
-            p2.x,
-            p2.y
+            bottomX,
+            bottomY
         );
+
+        ctx.strokeStyle =
+            "rgba(255,255,255,0.12)";
 
         ctx.stroke();
 
     }
 
 
-    // -----------------------------
-    // X 방향 격자
-    // -----------------------------
+    // =================================
+    // 가로 방향 격자
+    // =================================
+
+    const horizontalLines = 12;
+
 
     for (
-        let z = -gridSize;
-        z <= gridSize;
-        z += spacing
+        let i = 0;
+        i <= horizontalLines;
+        i++
     ) {
 
-        drawGridLine(
-            -gridSize,
-            -400,
-            z,
+        // 아래로 갈수록 간격이 넓어짐
+        const progress =
+            i / horizontalLines;
 
-            gridSize,
-            -400,
-            z
+        const y =
+            horizonY +
+            Math.pow(progress, 1.8) *
+            (bottomY - horizonY);
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            0,
+            y
         );
+
+        ctx.lineTo(
+            canvas.width,
+            y
+        );
+
+        ctx.strokeStyle =
+            "rgba(255,255,255,0.12)";
+
+        ctx.stroke();
 
     }
 
 
-    // -----------------------------
-    // Z 방향 격자
-    // -----------------------------
-
-    for (
-        let x = -gridSize;
-        x <= gridSize;
-        x += spacing
-    ) {
-
-        drawGridLine(
-            x,
-            -400,
-            -gridSize,
-
-            x,
-            -400,
-            gridSize
-        );
-
-    }
+    ctx.restore();
 
 }
 /* =====================================
